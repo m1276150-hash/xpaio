@@ -1,15 +1,26 @@
-# XPAIO Ecosystem Configuration
-# Issuer: A 지갑 (GCSFH...)
+# ==============================================================================
+# stellar.toml file for XPAIO Token on the Pi Network
+# ==============================================================================
+
+[METADATA]
+ORG_NAME="XPAIO Project"
+# 🚨 은하수님의 현재 활성화된 주소로 수정되었습니다:
+ORG_URL="https://xpaio.netlify.app" 
+ORG_DESCRIPTION="AI 혁신과 파이 네트워크의 탈중앙화 철학이 결합된 글로벌 디지털 생태계의 새로운 기준."
+ORG_OFFICIAL_EMAIL="m1276150@gmail.com"
+
+# --- 도메인 소유권 증명 ---
+# 이 키는 발행자(A)의 공개키 정보를 담고 있어야 합니다.
+SIGNING_KEY="GCSFHPOHQKWEDUW2YQ3YNVROWHYBGGPVWAZN6CWMLDTVVSLAEBHMF3JG"
 
 [[CURRENCIES]]
-code = "xpaio"
-issuer = "GCSFHPOHQKWEDUW2YQ3YNVROWHYBGGPVWAZN6CWMLDTVVSLAEBHMF3JG"
-name = "xpaio Token"
-symbol = "XPAIO"
-desc = "AI 혁신과 파이 네트워크의 탈중앙화 철학이 결합된 토큰"
-image = "https://xpaio-token.netlify.app/xpaio-logo.png"
-status = "live"
-
-[DOCUMENTATION]
-ORG_NAME = "xpaio Project"
-ORG_URL = "https://xpaio.netlify.app"
+code="xpaio"
+issuer="GCSFHPOHQKWEDUW2YQ3YNVROWHYBGGPVWAZN6CWMLDTVVSLAEBHMF3JG"
+name="xpaio Token"
+symbol="XPAIO"
+desc="AI 혁신과 파이 네트워크의 탈중앙화 철학이 결합된 핵심 유틸리티 토큰."
+# 🚨 로고 파일명이 logo.png라면 아래와 같이 경로를 맞춰야 합니다:
+image="https://xpaio.netlify.app/logo.png"
+status="live"
+display_decimals=7
+is_asset_authorized=false
