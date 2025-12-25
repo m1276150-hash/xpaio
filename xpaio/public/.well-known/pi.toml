@@ -1,0 +1,15 @@
+# XPAIO Ecosystem Configuration
+# Issuer: A 지갑 (GCSFH...)
+
+[[CURRENCIES]]
+code = "xpaio"
+issuer = "GCSFHPOHQKWEDUW2YQ3YNVROWHYBGGPVWAZN6CWMLDTVVSLAEBHMF3JG"
+name = "xpaio Token"
+symbol = "XPAIO"
+desc = "AI 혁신과 파이 네트워크의 탈중앙화 철학이 결합된 토큰"
+image = "https://xpaio-token.netlify.app/xpaio-logo.png"
+status = "live"
+
+[DOCUMENTATION]
+ORG_NAME = "xpaio Project"
+ORG_URL = "https://xpaio.netlify.app"
