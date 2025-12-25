@@ -1,12 +1,11 @@
 [build]
-  # 넷리파이가 빌드 명령어를 실행할 위치입니다.
-  base = "xpaio" 
-  # 실행할 빌드 명령어입니다. (보내주신 package.json의 build 스크립트 실행)
-  command = "npm run build"
-  # Next.js 빌드 결과물이 나오는 폴더입니다.
-  publish = ".next"
+  # 빌드 명령어를 비워서 Next.js 빌드 시도를 아예 차단합니다.
+  command = ""
+  # 실제 파일들이 모여있는 폴더를 직접 가리킵니다.
+  publish = "xpaio/public"
 
 [[redirects]]
+  # 어떤 주소로 들어와도 은하수님의 index.html을 보여줍니다.
   from = "/*"
   to = "/index.html"
   status = 200

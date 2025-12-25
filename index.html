@@ -7,122 +7,117 @@
     <title>XPAIO Pi Network Test App</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
-            background-color: #f4f4f9;
+            padding: 40px 20px;
+            background-color: #f8fafc;
+            color: #334155;
         }
         #logo {
-            width: 250px; /* 로고 크기 조정 */
-            height: 250px;
-            margin-bottom: 20px;
-            border-radius: 15%; /* 로고 모서리 둥글게 */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 180px;
+            height: 180px;
+            margin-bottom: 25px;
+            border-radius: 20%;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            background-color: white;
         }
         h1 {
-            color: #1a73e8;
-            margin-bottom: 30px;
+            color: #0ea5e9;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 450px;
         }
         button {
-            padding: 12px 25px;
-            font-size: 16px;
+            width: 100%;
+            padding: 14px;
+            font-size: 18px;
+            font-weight: 600;
             cursor: pointer;
-            background-color: #38bdf8; /* Pi Network 스타일 색상 */
+            background-color: #0284c7;
             color: white;
             border: none;
-            border-radius: 8px;
-            transition: background-color 0.3s;
+            border-radius: 12px;
+            transition: all 0.2s;
+            margin-top: 20px;
         }
-        button:hover {
-            background-color: #0ea5e9;
-        }
-        #status, #sandbox-id {
+        button:active { transform: scale(0.98); }
+        #status {
             margin-top: 20px;
             padding: 15px;
-            border-radius: 5px;
-            font-weight: bold;
-            text-align: center;
-            width: 80%;
-            max-width: 400px;
+            border-radius: 10px;
+            font-size: 14px;
+            line-height: 1.5;
+            min-height: 50px;
         }
-        .success {
-            background-color: #d1e7dd;
-            color: #0f5132;
-        }
-        .error {
-            background-color: #f8d7da;
-            color: #842029;
-        }
+        .success { background-color: #ecfdf5; color: #065f46; border: 1px solid #10b981; }
+        .error { background-color: #fef2f2; color: #991b1b; border: 1px solid #ef4444; }
+        .loading { background-color: #f1f5f9; color: #475569; }
     </style>
 </head>
 <body>
-    <h1>XPAIO Pi Network 인증 테스트</h1>
 
-    <img id="logo" src="logo.png" alt="XPAIO Logo">
+    <div class="container">
+        <img id="logo" src="logo.png" alt="XPAIO Logo">
+        <h1>XPAIO 에어드랍 센터</h1>
+        <p>파이 브라우저 전용 테스트 앱입니다.</p>
 
-    <button onclick="checkPiStatus()">Pi SDK 상태 및 인증 확인</button>
-    <div id="status">Pi SDK 상태: 초기 대기 중...</div>
-    <div id="sandbox-id"></div>
+        <button onclick="checkPiStatus()">Pi SDK 인증 및 보상 확인</button>
+        
+        <div id="status" class="loading">준비 완료: 버튼을 눌러주세요.</div>
+    </div>
 
     <script>
-        // Pi SDK 상태 및 인증을 확인하는 함수
-        function checkPiStatus() {
+        // [수정사항 1] 페이지 로드 시 즉시 Pi SDK 초기화
+        if (window.Pi) {
+            window.Pi.init({ version: "2.0", sandbox: true });
+            console.log("Pi SDK 초기화 완료 (Sandbox 모드)");
+        }
+
+        async function checkPiStatus() {
             const statusDiv = document.getElementById('status');
-            const sandboxDiv = document.getElementById('sandbox-id');
+            statusDiv.textContent = '⏳ 파이 네트워크 연결 중...';
+            statusDiv.className = 'loading';
 
-            statusDiv.textContent = 'Pi SDK 연결 시도 중...';
-            statusDiv.className = '';
-
-            if (window.Pi) {
-                // Pi SDK가 로드된 경우
-                statusDiv.textContent = '✅ Pi SDK가 로드되었습니다.';
-                statusDiv.className = 'success';
-
-                // Sandbox ID 표시 (테스트 환경에서만 표시됨)
-                if (window.Pi.getCurrentUser) {
-                    sandboxDiv.textContent = '샌드박스 ID: ' + Math.random().toString(36).substring(2, 10).toUpperCase();
-                } else {
-                    sandboxDiv.textContent = '';
-                }
-
-                // Pi 사용자 인증 요청 시작
-                try {
-                    window.Pi.authenticate(['username'], onIncompletePayment)
-                        .then(function(user) {
-                            statusDiv.textContent = '✅ Pi 사용자 인증 성공! 사용자명: ' + user.username;
-                            statusDiv.className = 'success';
-                            sandboxDiv.textContent = '인증 완료! 이제 Pi Network 앱을 확인하세요.';
-                            sandboxDiv.className = 'success';
-                        })
-                        .catch(function(error) {
-                            statusDiv.textContent = '❌ Pi 사용자 인증 실패: ' + error.message;
-                            statusDiv.className = 'error';
-                            sandboxDiv.textContent = '인증 코드를 Pi Network 앱에 입력하세요.';
-                            sandboxDiv.className = 'error';
-                        });
-                } catch (e) {
-                    statusDiv.textContent = '❌ 인증 요청 오류: ' + e.message;
-                    statusDiv.className = 'error';
-                }
-
-            } else {
-                // Pi SDK를 찾을 수 없는 경우
-                statusDiv.textContent = '❌ Pi SDK를 찾을 수 없습니다. Pi Browser에서 접속했는지 확인하세요.';
+            if (!window.Pi) {
+                statusDiv.textContent = '❌ Pi SDK를 찾을 수 없습니다. 파이 브라우저에서 접속했는지 확인하세요.';
                 statusDiv.className = 'error';
-                sandboxDiv.textContent = '';
+                return;
+            }
+
+            try {
+                // [수정사항 2] 사용자 인증 요청 (username 및 payments 권한)
+                const scopes = ['username', 'payments'];
+                
+                const user = await window.Pi.authenticate(scopes, onIncompletePayment);
+                
+                // 인증 성공 시 실행되는 로직
+                statusDiv.innerHTML = `✅ <b>인증 성공!</b><br>사용자: ${user.user.username}<br>UID: ${user.user.uid.substring(0, 10)}...`;
+                statusDiv.className = 'success';
+                
+                // 💡 [다음 단계 예고] 여기서 유저의 지갑 주소를 받아 토큰 전송 서버로 보낼 수 있습니다.
+                console.log("인증 유저 정보:", user);
+
+            } catch (error) {
+                statusDiv.textContent = '❌ 인증 실패: ' + error.message;
+                statusDiv.className = 'error';
             }
         }
 
-        // 미완료된 결제에 대한 콜백 함수 (현재 인증 테스트에는 직접적인 영향 없음)
+        // [필수] 미완료 결제 건 처리 콜백 함수
         function onIncompletePayment(payment) {
             console.log("미완료 결제 발견:", payment);
-            // 사용자에게 해당 결제를 완료하도록 안내하는 로직 추가 가능
+            // 실제 서비스 시 서버에 이 결제 ID를 보내 완료 처리를 요청해야 합니다.
         }
-
-        // 페이지 로드 시 상태 확인
-        // window.onload = checkPiStatus; // 자동 실행을 원하지 않으면 주석 처리
     </script>
 </body>
 </html>
