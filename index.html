@@ -2,19 +2,30 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0ea5e9">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <title>XPAIO 에어드랍 센터</title>
+    
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/logo.png">
+    
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <style>
-        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; background-color: #f8fafc; }
-        .container { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 450px; }
-        #logo { width: 120px; height: 120px; margin-bottom: 20px; border-radius: 20%; }
-        h1 { color: #0ea5e9; font-size: 1.5rem; }
-        button { width: 100%; padding: 14px; font-size: 18px; font-weight: 600; cursor: pointer; background-color: #0284c7; color: white; border: none; border-radius: 12px; margin-top: 20px; }
-        #status { margin-top: 20px; padding: 15px; border-radius: 10px; font-size: 14px; min-height: 50px; }
-        .success { background-color: #ecfdf5; color: #065f46; border: 1px solid #10b981; }
-        .error { background-color: #fef2f2; color: #991b1b; border: 1px solid #ef4444; }
-        .loading { background-color: #f1f5f9; color: #475569; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; background-color: #f8fafc; color: #334155; margin: 0; }
+        .container { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; width: 100%; max-width: 450px; }
+        #logo { width: 120px; height: 120px; margin-bottom: 20px; border-radius: 24px; object-fit: cover; }
+        h1 { color: #0ea5e9; font-size: 1.6rem; margin: 10px 0; }
+        p { color: #64748b; margin-bottom: 25px; }
+        button { width: 100%; padding: 16px; font-size: 18px; font-weight: 700; cursor: pointer; background-color: #0284c7; color: white; border: none; border-radius: 14px; transition: transform 0.2s, background-color 0.2s; }
+        button:active { transform: scale(0.98); background-color: #0369a1; }
+        #status { margin-top: 25px; padding: 18px; border-radius: 12px; font-size: 14px; min-height: 60px; line-height: 1.6; }
+        .success { background-color: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+        .error { background-color: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+        .loading { background-color: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+        b { color: #0f172a; }
     </style>
 </head>
 <body>
@@ -27,18 +38,23 @@
     </div>
 
     <script>
-        // SDK 초기화
-        window.addEventListener('DOMContentLoaded', () => {
+        // SDK 초기화 (페이지 로드 시 즉시 실행)
+        window.onload = () => {
             if (window.Pi) {
-                window.Pi.init({ version: "2.0", sandbox: true });
+                try {
+                    window.Pi.init({ version: "2.0", sandbox: true });
+                    console.log("Pi SDK 초기화 완료");
+                } catch (e) {
+                    console.error("SDK 초기화 에러:", e);
+                }
             }
-        });
+        };
 
-        function onIncompletePayment(payment) { console.log("미완료 결제:", payment); }
+        function onIncompletePayment(payment) { console.log("미완료 결제 건 처리 중...", payment); }
 
         async function checkPiStatus() {
             const statusDiv = document.getElementById('status');
-            statusDiv.textContent = '⏳ 파이 네트워크 인증 중...';
+            statusDiv.innerHTML = '⏳ <b>파이 네트워크 인증 중...</b><br>팝업창이 뜨면 승인을 눌러주세요.';
             statusDiv.className = 'loading';
 
             try {
@@ -46,12 +62,12 @@
                 const authData = await window.Pi.authenticate(scopes, onIncompletePayment);
                 const username = authData.user.username;
 
-                statusDiv.innerHTML = `✅ <b>인증 성공!</b><br>환영합니다, <b>${username}</b>님!<br>🚀 10 XPAIO 보상을 전송합니다...`;
+                statusDiv.innerHTML = `✅ <b>인증 성공!</b><br>반갑습니다, <b>${username}</b>님!<br>🚀 10 XPAIO 보상을 즉시 전송합니다...`;
+                statusDiv.className = 'success';
                 
-                // 보상 전송 함수 호출
                 sendReward(username); 
             } catch (error) {
-                statusDiv.textContent = '❌ 인증 실패: ' + error.message;
+                statusDiv.textContent = '❌ 인증 실패: ' + (error.message || '다시 시도해 주세요.');
                 statusDiv.className = 'error';
             }
         }
@@ -65,10 +81,13 @@
                     body: JSON.stringify({ username: username })
                 });
                 const result = await response.json();
+                
                 if (response.ok) {
-                    statusDiv.innerHTML = `🎊 <b>지급 완료!</b><br><b>${username}</b>님께 보상이 전송되었습니다!`;
+                    statusDiv.innerHTML = `🎊 <b>지급 성공!</b><br><b>${username}</b>님께 10 XPAIO가 지급되었습니다.<br>지갑을 확인해 보세요!`;
                     statusDiv.className = 'success';
-                } else { throw new Error(result.error); }
+                } else { 
+                    throw new Error(result.error || '전송 중 서버 에러 발생'); 
+                }
             } catch (error) {
                 statusDiv.textContent = '❌ 보상 지급 실패: ' + error.message;
                 statusDiv.className = 'error';
