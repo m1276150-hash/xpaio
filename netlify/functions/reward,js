@@ -1,20 +1,18 @@
 const axios = require('axios');
 
 exports.handler = async (event) => {
-    // 1. 보안을 위해 POST 요청만 허용
     if (event.httpMethod !== "POST") {
         return { statusCode: 405, body: "Method Not Allowed" };
     }
 
     try {
         const { username } = JSON.parse(event.body);
-        const apiKey = process.env.PI_API_KEY; // 넷리파이에 저장한 그 키!
+        const apiKey = process.env.PI_API_KEY; // Netlify 환경변수에서 가져옴
 
-        // 2. 파이 서버에 결제(전송) 요청 보내기
-        // 여기서 은하수님의 지갑(B) 설정이 사용됩니다.
+        // 파이 API를 통해 10 XPAIO 전송 요청
         const response = await axios.post('https://api.minepi.com/v2/payments', {
             payment: {
-                amount: 10, // 보낼 수량
+                amount: 10,
                 memo: "XPAIO 에어드랍 보상",
                 metadata: { type: "airdrop" },
                 uid: username
@@ -27,7 +25,6 @@ exports.handler = async (event) => {
             statusCode: 200,
             body: JSON.stringify({ message: "전송 성공!", data: response.data })
         };
-
     } catch (error) {
         return {
             statusCode: 500,
