@@ -1,1 +1,4 @@
-/.well-known/pi.toml  /well-known-pi.toml  200
+/*
+  Access-Control-Allow-Origin: *
+  X-Frame-Options: ALLOW-FROM https://sandbox.minepi.com
+  Content-Security-Policy: frame-ancestors 'self' https://sandbox.minepi.com https://*.minepi.com;
