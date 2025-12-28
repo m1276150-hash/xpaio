@@ -38,21 +38,18 @@
     <script>
         const Pi = window.Pi;
 
-        // [중요] 페이지 로드 시 즉시 실행하여 8자리 코드 유도
+        // [필수 수정 1] SDK 초기화: sandbox: true 설정으로 8자리 코드 유도
         window.onload = function() {
             try {
-                // 1. SDK 초기화 (샌드박스 강제 설정)
                 Pi.init({ version: "2.0", sandbox: true });
-                console.log("SDK 초기화 완료");
-                
-                // 자동으로 로그인을 시도하여 8자리 코드를 띄웁니다.
-                login(); 
+                console.log("SDK 초기화 완료 (Sandbox Mode)");
+                login(); // 페이지 로드 시 자동 인증 시도
             } catch (e) {
-                console.error("초기화 실패:", e);
+                console.error("SDK 초기화 실패:", e);
             }
         };
 
-        // 2. 인증 함수
+        // 인증 함수
         async function login() {
             try {
                 const scopes = ['username', 'payments'];
@@ -60,57 +57,50 @@
                 
                 document.getElementById('user-name').innerText = auth.user.username + "님";
                 document.getElementById('status-text').innerHTML = "XPAIO 인증 완료!<br>테스트 결제를 진행할 수 있습니다.";
-                console.log("인증 성공:", auth.user.username);
             } catch (err) {
-                console.error("인증 에러:", err);
+                console.error("인증 실패:", err);
             }
         }
 
-        // 3. 결제 함수 (서버 승인 로직 추가됨)
+        // [필수 수정 2] 결제 함수: 지정하신 로컬 API 경로로 수정
         async function transferPi() {
             try {
                 const payment = await Pi.createPayment({
                     amount: 1.0,
-                    memo: "XPAIO 프로젝트 테스트 후원",
-                    metadata: { orderId: "XPAIO-" + Date.now() }
+                    memo: "XPAIO 로컬 테스트 후원",
+                    metadata: { orderId: "XPAIO-LOCAL-" + Date.now() }
                 }, {
-                    // [핵심 수정] 서버 승인 요청 (payment.js와 연결)
+                    // 서버 승인 요청: 리더님이 지정한 경로 반영
                     onReadyForServerApproval: async (paymentId) => { 
-                        console.log("서버 승인 요청 중 (ID):", paymentId);
-                        
-                        // 리더님이 만든 API 주소로 결제 ID를 보냅니다.
-                        await fetch('/api/payment', {
+                        console.log("로컬 서버 승인 요청 중:", paymentId);
+                        await fetch('/xpaio-token/app/adi/payment', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ paymentId })
                         });
-                        console.log("서버 승인 신호 전송 완료");
                     },
                     onReadyForServerCompletion: (paymentId, txid) => { 
-                        alert("결제 완료 성공! 감사합나다.\nTXID: " + txid);
+                        alert("결제 성공! TXID: " + txid);
                     },
-                    onCancel: (paymentId) => { console.log("사용자가 취소함"); },
+                    onCancel: (paymentId) => { console.log("결제 취소됨"); },
                     onError: (error, payment) => { 
                         console.error("결제 에러:", error);
-                        alert("결제 중 오류가 발생했습니다. 다시 시도해 주세요.");
                     }
                 });
             } catch (err) {
-                alert("결제창을 열 수 없습니다.");
+                alert("결제창을 호출할 수 없습니다.");
             }
         }
 
-        // 4. 미완료 결제 해결 (이게 있어야 결제창 잠금이 풀립니다)
+        // [필수 수정 2] 미완료 결제 처리: 지정하신 로컬 API 경로 반영
         async function onIncompletePaymentFound(payment) { 
             console.warn("미완료 결제 발견:", payment.identifier);
-            
-            // 미완료 결제를 리더님의 서버로 보내서 강제 완료 처리
-            await fetch('/api/payment', {
+            await fetch('/xpaio-token/app/adi/payment', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ paymentId: payment.identifier })
             });
-            console.log("미완료 건 처리 완료");
+            console.log("미완료 건 서버 처리 완료");
         }
     </script>
 </body>
