@@ -38,8 +38,11 @@
     <script>
         const Pi = window.Pi;
         // 1. SDK 초기화 (반드시 sandbox: true 유지)
+        try{
         Pi.init({ version: "2.0", sandbox: true });
-
+    } catch (e) {
+        console.error("SDK 초기화 실패:", e);
+    }
         // 2. 인증 함수: 사용자 정보를 화면에 표시
         async function login() {
             try {
