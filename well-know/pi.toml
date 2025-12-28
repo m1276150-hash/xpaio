@@ -1,0 +1,24 @@
+# XPAIO 프로젝트 공식 설정 파일
+# 경로: https://cool-entremet-699764.netlify.app/.well-known/pi.toml
+
+NETWORK_PASSPHRASE = "Pi Testnet"
+
+# [중요] 현재 활성화된 발행 지갑 및 계정
+ACCOUNTS = ["GDMHOZS5A6QZFI55WMGLZRAJMYUC5WEEMCEYY6JS5WVTTSGK4XLZQUVR"]
+
+[[CURRENCIES]]
+code = "XPAIO"
+issuer = "GDMHOZS5A6QZFI55WMGLZRAJMYUC5WEEMCEYY6JS5WVTTSGK4XLZQUVR"
+display_decimals = 2
+name = "XPAIO Team"
+symbol = "XPAIO"
+desc = "Official utility token for the XPAIO ecosystem."
+image = "https://cool-entremet-699764.netlify.app/icon.png"
+
+[METADATA]
+# 파이 개발자 포털 Step 8에서 발급받은 유효성 검증 키
+VERIFICATION_KEY = "8269c9f9a9148a21ae8a7b675f369c9f23c15ef995adfd7a77b12b6d280b9703f4a9eb19a120e099a1df263cf2de107b3cef91355219a1d3ca37225dcb4954c0"
+
+[DOCUMENTATION]
+ORG_NAME = "XPAIO"
+ORG_URL = "https://cool-entremet-699764.netlify.app"
