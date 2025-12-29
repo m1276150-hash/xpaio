@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 /*
   Access-Control-Allow-Origin: *
   Content-Security-Policy: frame-ancestors 'self' https://sandbox.minepi.com https://*.minepi.com;
+=======
+/*
+  Access-Control-Allow-Origin: *
+  Content-Security-Policy: frame-ancestors 'self' https://sandbox.minepi.com https://*.minepi.com;
+>>>>>>> bf07ebee76b95af17f261b76a70f3d55b68425b4
   X-Frame-Options: ALLOW-FROM https://sandbox.minepi.com
