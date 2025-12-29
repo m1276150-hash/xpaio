@@ -3,72 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XPAIO - Official Ecosystem</title>
+    <title>XPAIO - 파이 네트워크 연동</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <style>
-        /* 리더님의 기존 디자인 스타일 유지 */
-        body { font-family: 'Noto Sans KR', sans-serif; background-color: #0f172a; color: #f8fafc; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        .card { background: #1e293b; padding: 3rem; border-radius: 2rem; text-align: center; border: 1px solid #334155; max-width: 450px; width: 90%; }
-        .status-badge { display: block; background: #064e3b; color: #34d399; padding: 0.8rem 1rem; border-radius: 1rem; font-weight: bold; cursor: pointer; border: none; margin-top: 1rem; width: 100%; }
-        .pay-btn { background: #0369a1; color: #e0f2fe; }
+        body { background-color: #0d1117; color: #c9d1d9; font-family: 'Malgun Gothic', sans-serif; text-align: center; padding-top: 100px; }
+        .container { border: 2px solid #30363d; display: inline-block; padding: 40px; border-radius: 20px; background-color: #161b22; }
+        .status-btn { background-color: #238636; color: white; border: none; padding: 15px 30px; border-radius: 5px; font-weight: bold; font-size: 1.1em; cursor: pointer; }
+        .instruction { margin-top: 20px; color: #8b949e; line-height: 1.6; }
+        #username { color: #58a6ff; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>XPAIO</h1>
-        <p id="status-text">Render 서버 연결 시도 중...</p>
-        <button class="status-badge" onclick="login()">● 지갑 인증하기</button>
-        <button class="status-badge pay-btn" onclick="transferPi()">⚡ 1 Test-Pi 후원하기</button>
+    <div class="container">
+        <h1>XPAIO Ecosystem</h1>
+        <div id="loading-area">
+            <p>파이 네트워크와 보안 연결 중...</p>
+        </div>
+        <div id="auth-area" style="display:none;">
+            <p><span id="username"></span> 리더님, 환영합니다!</p>
+            <button class="status-btn">✅ SDK 연동 완료</button>
+            <div class="instruction">
+                이제 파이 지갑 앱의 <strong>[Manage Tokens]</strong> 메뉴에서<br>
+                <strong>XPAIO</strong> 토큰을 찾아 <strong>'Add'</strong> 버튼을 눌러주세요.
+            </div>
+        </div>
     </div>
 
     <script>
         const Pi = window.Pi;
-        // [중요] 리더님의 Render 서버 주소로 수정하세요!
-        const RENDER_SERVER_URL = "https://xpaio-token.onrender.com"; 
-
-        window.onload = function() {
+        async function initPi() {
             try {
-                Pi.init({ version: "2.0", sandbox: true });
-                login();
-            } catch (e) { console.error(e); }
-        };
-
-        async function login() {
-            try {
-                const auth = await Pi.authenticate(['username', 'payments'], onIncompletePaymentFound);
-                document.getElementById('status-text').innerText = auth.user.username + "님 환영합니다!";
-            } catch (err) { console.error(err); }
-        }
-
-        async function transferPi() {
-            try {
-                const payment = await Pi.createPayment({
-                    amount: 1.0,
-                    memo: "XPAIO Render Test",
-                    metadata: { orderId: "XPAIO-" + Date.now() }
-                }, {
-                    onReadyForServerApproval: async (paymentId) => {
-                        // Render 서버의 정석 경로로 데이터 전송
-                        await fetch(`${RENDER_SERVER_URL}/xpaio-token/app/adi/payment`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ paymentId })
-                        });
-                    },
-                    onReadyForServerCompletion: (paymentId, txid) => { alert("결제 완료! TXID: " + txid); },
-                    onCancel: (id) => console.log("취소"),
-                    onError: (err) => console.error(err)
+                // 파이 SDK 초기화 (샌드박스 모드)
+                await Pi.init({ version: "2.0", sandbox: true });
+                
+                // 사용자 인증 요청
+                const auth = await Pi.authenticate(['username'], (payment) => {
+                    // 여기서는 결제 로직을 비워둡니다 (리더님 지시 사항)
                 });
-            } catch (err) { alert("결제창을 열 수 없습니다. 8자리 코드를 확인하세요."); }
-        }
 
-        async function onIncompletePaymentFound(payment) {
-            await fetch(`${RENDER_SERVER_URL}/xpaio-token/app/adi/payment`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ paymentId: payment.identifier })
-            });
+                document.getElementById('loading-area').style.display = 'none';
+                document.getElementById('auth-area').style.display = 'block';
+                document.getElementById('username').innerText = auth.user.username;
+
+                console.log("SDK 연동 성공:", auth.user.username);
+            } catch (err) {
+                console.error("SDK 인증 실패:", err);
+                document.getElementById('loading-area').innerHTML = 
+                    "<p style='color:#f85149;'>파이 브라우저에서 접속하거나<br>8자리 코드를 입력해 주세요.</p>";
+            }
         }
+        window.onload = initPi;
     </script>
 </body>
 </html>
