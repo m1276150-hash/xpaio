@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(express.static('public')); 
 
 // 리더님의 진짜 Secret API Key (개발자 포털 맨 아래 발급본)
-const PI_API_KEY = "6zyujyo7kwm6i3ae1qrwkyktdzuksafabjc6zpwdjamurqkpe0oy0v7yphnb9mle"; 
+const PI_API_KEY = "5vzpsblvjk2zbiusbgg4s5t7ogwtzb4dcrcrdaauzhcahrn5cjcnj8pwgwitbtzj"; 
 
 /**
  * [필수 수정 사항 2 반영] 서버 API 엔드포인트

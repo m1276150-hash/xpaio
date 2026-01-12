@@ -11,7 +11,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Pi API 기본 설정
 const PI_API_URL = "https://api.minepi.com/v2";
-const PI_API_KEY = "6zyujyo7kwm6i3ae1qrwkyktdzuksafabjc6zpwdjamurqkpe0oy0v7yphnb9mle";   // Developer Portal에서 발급받은 API Key
+const PI_API_KEY = "5vzpsblvjk2zbiusbgg4s5t7ogwtzb4dcrcrdaauzhcahrn5cjcnj8pwgwitbtzj";   // Developer Portal에서 발급받은 API Key
 
 // 1) /me — 사용자 정보 요청
 app.post("/me", async (req, res) => {
