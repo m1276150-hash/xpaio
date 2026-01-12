@@ -1,8 +1,7 @@
 /*
   Access-Control-Allow-Origin: *
   Content-Security-Policy: frame-ancestors 'self' https://sandbox.minepi.com https://*.minepi.com;
-  X-Frame-Options: ALLOW-FROM https://sandbox.minepi.com
 
-/.well-known/*
+/.well-known/pi.toml
+  Content-Type: application/toml
   Access-Control-Allow-Origin: *
-  Content-Type: text/plain; charset=utf-8

@@ -1,15 +1,13 @@
 [build]
   command = "# no build"
-  publish = "public"
+  publish = "/"  # 점(.) 대신 슬래시(/)를 사용하여 루트임을 명시합니다.
 
-# .well-known/pi.toml 경로에 대한 직접 접근 허용
 [[headers]]
   for = "/.well-known/pi.toml"
   [headers.values]
     Content-Type = "application/toml"
     Access-Control-Allow-Origin = "*"
 
-# 404 에러 방지를 위한 리다이렉트 설정 (선택 사항)
 [[redirects]]
   from = "/*"
   to = "/index.html"
