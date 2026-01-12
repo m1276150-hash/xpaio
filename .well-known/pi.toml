@@ -1,21 +1,25 @@
-# XPAIO 프로젝트 공식 설정 파일
-
-NETWORK_PASSPHRASE = "Pi Testnet"
-
-ACCOUNTS = ["GDMDH0Z5SAGQZFIS5WMLG5ZRAJMVUCSMECEY6J55WVTTSGK4XLZQUVR"]
-
-[[CURRENCIES]]
-code = "XPAIO"
-issuer = "GDMDH0Z5SAGQZFIS5WMLG5ZRAJMVUCSMECEY6J55WVTTSGK4XLZQUVR"
-display_decimals = 2
-name = "XPAIO Team"
-symbol = "XPAIO"
-desc = "Official utility token for the XPAIO ecosystem."
-image = "https://cool-entremet-699764.netlify.app/icon.png"
+# ==============================================================================
+# stellar.toml file for XPAIO Token on the Pi Network
+# ==============================================================================
 
 [METADATA]
-VERIFICATION_KEY = "82609cf9a90184a21ea8a7b675f369c9f23c15ef99sadfd7a7b71b26d280b9703f4a9eb19a120e099a1df263cf2de107b3cef913"
+ORG_NAME="XPAIO Project"
+# 🚨 실제 도메인으로 수정하세요:
+ORG_URL="https://xpaio.com" 
+ORG_DESCRIPTION="AI 혁신과 파이 네트워크의 탈중앙화 철학이 결합된 글로벌 디지털 생태계의 새로운 기준."
+ORG_OFFICIAL_EMAIL="m1276150@gmail.com"
 
-[DOCUMENTATION]
-ORG_NAME = "XPAIO"
-ORG_URL = "https://cool-entremet-699764.netlify.app"
+# --- 도메인 소유권 증명 ---
+SIGNING_KEY="GCSFHPOHQKWEDUW2YQ3YNVROWHYBGGPVWAZN6CWMLDTVVSLAEBHMF3JG"
+
+[[CURRENCIES]]
+code="xpaio"
+issuer="GCSFHPOHQKWEDUW2YQ3YNVROWHYBGGPVWAZN6CWMLDTVVSLAEBHMF3JG"
+name="xpaio Token"
+symbol="XPAIO"
+desc="AI 혁신과 파이 네트워크의 탈중앙화 철학이 결합된 핵심 유틸리티 토큰."
+# 🚨 로고 이미지 주소도 실제 도메인으로 수정하세요:
+image="https://xpaio.com/logo.png"
+status="live"
+display_decimals=7
+is_asset_authorized=false
