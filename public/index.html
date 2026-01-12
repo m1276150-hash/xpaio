@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XPAIO - Pi Network 연동</title>
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+  <style>
+    body {
+      background-color: #0d1117;
+      color: #c9d1d9;
+      font-family: 'Malgun Gothic', sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      margin-top: 100px;
+      display: inline-block;
+      padding: 40px;
+      border-radius: 20px;
+      background-color: #161b22;
+      border: 2px solid #30363d;
+    }
+    .status-btn {
+      background-color: #238636;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: 1.1em;
+      cursor: pointer;
+    }
+    .instruction {
+      margin-top: 20px;
+      color: #8b949e;
+      line-height: 1.6;
+    }
+    #username {
+      color: #58a6ff;
+      font-weight: bold;
+    }
+    .error {
+      color: #f85149;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>XPAIO Ecosystem</h1>
+    <div id="loading-area">
+      <p>파이 네트워크와 보안 연결 중...</p>
+    </div>
+    <div id="auth-area" style="display: none;">
+      <p><span id="username"></span> 리더님, 환영합니다!</p>
+      <button class="status-btn">✅ SDK 연동 완료</button>
+      <div class="instruction">
+        이제 파이 지갑 앱의 <strong>[Manage Tokens]</strong> 메뉴에서<br />
+        <strong>XPAIO</strong> 토큰을 찾아 <strong>'Add'</strong> 버튼을 눌러주세요.
+      </div>
+    </div>
+    <div id="error-area" class="error" style="display: none;"></div>
+  </div>
+
+  <script>
+    const Pi = window.Pi;
+
+    async function initPi() {
+      try {
+        await Pi.init({ version: "2.0", sandbox: true });
+
+        const auth = await Pi.authenticate(["username"], (payment) => {
+          // 결제 로직은 현재 비워둡니다
+        });
+
+        document.getElementById("loading-area").style.display = "none";
+        document.getElementById("auth-area").style.display = "block";
+        document.getElementById("username").innerText = auth.user.username;
+
+        console.log("SDK 연동 성공:", auth.user.username);
+      } catch (err) {
+        console.error("SDK 연동 실패:", err);
+        document.getElementById("loading-area").style.display = "none";
+        document.getElementById("error-area").style.display = "block";
+        document.getElementById("error-area").innerHTML =
+          "파이 브라우저에서 접속하거나<br>8자리 코드를 입력해 주세요.";
+      }
+    }
+
+    window.onload = initPi;
+  </script>
+</body>
+</html>
