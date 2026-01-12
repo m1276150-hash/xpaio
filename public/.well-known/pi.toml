@@ -1,0 +1,21 @@
+# XPAIO 프로젝트 공식 설정 파일
+
+NETWORK_PASSPHRASE = "Pi Testnet"
+
+ACCOUNTS = ["GDMDH0Z5SAGQZFIS5WMLG5ZRAJMVUCSMECEY6J55WVTTSGK4XLZQUVR"]
+
+[[CURRENCIES]]
+code = "XPAIO"
+issuer = "GDMDH0Z5SAGQZFIS5WMLG5ZRAJMVUCSMECEY6J55WVTTSGK4XLZQUVR"
+display_decimals = 2
+name = "XPAIO Team"
+symbol = "XPAIO"
+desc = "Official utility token for the XPAIO ecosystem."
+image = "https://cool-entremet-699764.netlify.app/icon.png"
+
+[METADATA]
+VERIFICATION_KEY = "82609cf9a90184a21ea8a7b675f369c9f23c15ef99sadfd7a7b71b26d280b9703f4a9eb19a120e099a1df263cf2de107b3cef913"
+
+[DOCUMENTATION]
+ORG_NAME = "XPAIO"
+ORG_URL = "https://cool-entremet-699764.netlify.app"
