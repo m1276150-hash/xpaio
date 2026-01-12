@@ -1,10 +1,16 @@
 [build]
-  command = "# no build command" # 빌드 명령어가 필요 없는 경우
-  publish = "public"            # public 폴더를 웹사이트 루트로 사용
+  command = "# no build"
+  publish = "public"
 
-# .well-known 폴더와 pi.toml 파일에 대한 헤더 설정
+# .well-known/pi.toml 경로에 대한 직접 접근 허용
 [[headers]]
   for = "/.well-known/pi.toml"
   [headers.values]
     Content-Type = "application/toml"
     Access-Control-Allow-Origin = "*"
+
+# 404 에러 방지를 위한 리다이렉트 설정 (선택 사항)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
