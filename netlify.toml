@@ -1,0 +1,13 @@
+[build]
+  command = "npm run build"
+  publish = ".next"  # Next.js 빌드 결과물 폴더 지정
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# .well-known/pi.toml 파일에 대한 접근 허용 및 타입 지정
+[[headers]]
+  for = "/.well-known/pi.toml"
+  [headers.values]
+    Content-Type = "application/toml"
+    Access-Control-Allow-Origin = "*"
