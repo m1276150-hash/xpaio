@@ -6,45 +6,15 @@
   <title>XPAIO - Pi Network 연동</title>
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
   <style>
-    body {
-      background-color: #0d1117;
-      color: #c9d1d9;
-      font-family: 'Malgun Gothic', sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      margin-top: 100px;
-      display: inline-block;
-      padding: 40px;
-      border-radius: 20px;
-      background-color: #161b22;
-      border: 2px solid #30363d;
-    }
-    .status-btn {
-      background-color: #238636;
-      color: white;
-      border: none;
-      padding: 15px 30px;
-      border-radius: 5px;
-      font-weight: bold;
-      font-size: 1.1em;
-      cursor: pointer;
-    }
-    .instruction {
-      margin-top: 20px;
-      color: #8b949e;
-      line-height: 1.6;
-    }
-    #username {
-      color: #58a6ff;
-      font-weight: bold;
-    }
-    .error {
-      color: #f85149;
-      margin-top: 20px;
-    }
+    body { background-color: #0d1117; color: #c9d1d9; font-family: 'Malgun Gothic', sans-serif; text-align: center; margin: 0; padding: 0; }
+    .container { margin-top: 100px; display: inline-block; padding: 40px; border-radius: 20px; background-color: #161b22; border: 2px solid #30363d; }
+    .status-btn { background-color: #238636; color: white; border: none; padding: 15px 30px; border-radius: 5px; font-weight: bold; font-size: 1.1em; cursor: pointer; margin-bottom: 10px; }
+    /* 결제 버튼 스타일 */
+    .pay-btn { background-color: #6200ee; color: white; border: none; padding: 15px 30px; border-radius: 10px; font-weight: bold; font-size: 1.2em; cursor: pointer; margin-top: 20px; transition: 0.3s; }
+    .pay-btn:hover { background-color: #3700b3; }
+    .instruction { margin-top: 20px; color: #8b949e; line-height: 1.6; }
+    #username { color: #58a6ff; font-weight: bold; }
+    .error { color: #f85149; margin-top: 20px; }
   </style>
 </head>
 <body>
@@ -53,12 +23,18 @@
     <div id="loading-area">
       <p>파이 네트워크와 보안 연결 중...</p>
     </div>
+    
     <div id="auth-area" style="display: none;">
       <p><span id="username"></span> 리더님, 환영합니다!</p>
       <button class="status-btn">✅ SDK 연동 완료</button>
+      
+      <div>
+        <button class="pay-btn" onclick="openPiPayment()">테스트 결제 (0.1 Pi)</button>
+      </div>
+
       <div class="instruction">
-        이제 파이 지갑 앱의 <strong>[Manage Tokens]</strong> 메뉴에서<br />
-        <strong>XPAIO</strong> 토큰을 찾아 <strong>'Add'</strong> 버튼을 눌러주세요.
+        이제 결제 버튼을 눌러 지갑 연동을 확인하세요.<br />
+        결제가 성공하면 메인넷 준비 10단계가 완료됩니다.
       </div>
     </div>
     <div id="error-area" class="error" style="display: none;"></div>
@@ -69,23 +45,44 @@
 
     async function initPi() {
       try {
+        // 테스트 중이므로 sandbox: true 유지
         await Pi.init({ version: "2.0", sandbox: true });
 
         const auth = await Pi.authenticate(["username"], (payment) => {
-          // 결제 로직은 현재 비워둡니다
+          // 서버 사이드 승인 로직 (추후 필요시 구현)
         });
 
         document.getElementById("loading-area").style.display = "none";
         document.getElementById("auth-area").style.display = "block";
         document.getElementById("username").innerText = auth.user.username;
 
-        console.log("SDK 연동 성공:", auth.user.username);
       } catch (err) {
-        console.error("SDK 연동 실패:", err);
         document.getElementById("loading-area").style.display = "none";
         document.getElementById("error-area").style.display = "block";
-        document.getElementById("error-area").innerHTML =
-          "파이 브라우저에서 접속하거나<br>8자리 코드를 입력해 주세요.";
+        document.getElementById("error-area").innerHTML = "파이 브라우저에서 접속해 주세요.";
+      }
+    }
+
+    // [추가됨] 결제창을 실제로 띄우는 핵심 함수
+    async function openPiPayment() {
+      try {
+        const payment = await Pi.createPayment({
+          amount: 0.1,
+          memo: "XPAIO 테스트넷 결제 테스트",
+          metadata: { orderId: "XPAIO_TEST_001" },
+        }, {
+          onReadyForServerApproval: (paymentId) => {
+            console.log("결제 대기 중 (ID):", paymentId);
+            // 테스트 단계에서는 여기까지 오면 결제창이 성공적으로 뜬 것입니다.
+          },
+          onReadyForServerCompletion: (paymentId, txid) => {
+            alert("결제가 성공했습니다! TXID: " + txid);
+          },
+          onCancel: (paymentId) => { console.log("결제 취소"); },
+          onError: (error, payment) => { console.error("에러:", error); },
+        });
+      } catch (err) {
+        alert("결제창 호출 실패: " + err.message);
       }
     }
 
