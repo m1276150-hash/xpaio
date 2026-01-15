@@ -21,6 +21,11 @@
   status = 200
 
 [[redirects]]
+  from = "/privacy"
+  to = "/privacy.html"
+  status = 200
+  
+[[redirects]]
   # 3. 10단계 결제 화면 로드용 (마지막 순서)
   from = "/*"
   to = "/index.html"

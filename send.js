@@ -1,60 +1,39 @@
-const {
-  Horizon,
-  Keypair,
-  Asset,
-  TransactionBuilder,
-  Networks,
-  Operation
-} = require("@stellar/stellar-sdk");
+const { Horizon, Keypair, TransactionBuilder, Networks, Operation } = require("@stellar/stellar-sdk");
 
-const server = new Horizon.Server("https://horizon-testnet.stellar.org");
+// 파이 테스트넷 서버 주소로 변경하는 것이 좋습니다.
+const server = new Horizon.Server("https://api.testnet.minepi.com"); 
 
-// 유통자 비밀키 입력
-const DISTRIBUTOR_SECRET = "SAFCGPAIWQVXOO2QFK2GIJAFD7MEP4NHRKQ3GGAOAXLQGUTTMIZG2AYV";
-const distributor = Keypair.fromSecret(DISTRIBUTOR_SECRET);
+// 1. 발행자(ISSUER)의 비밀키를 입력하세요 (가장 중요!)
+const ISSUER_SECRET = "SAR6QHU2KGE2Q4TJGV3B3DNVPJDB2EDIAWSZUAQ3ZGB5KVWEYVJ66RWA"; 
+const issuerKeypair = Keypair.fromSecret(ISSUER_SECRET);
 
-// 발행자 주소
-const ISSUER_PUBLIC = "GCSFHPOHQKWEDUW2YQ3YNVROWHYBGGPVWAZN6CWMLDTVVSLAEBHMF3JG";
-
-// 전송할 자산
-const XPAIO = new Asset("XPAIO", ISSUER_PUBLIC);
-
-// 받는 사람 주소
-const RECEIVER = "GDDY4VDYKAIQ6SU2QQDJEBTMBMCUJW2NKW6Y46L6FFPYKQ5RWFG73EXK";
-
-async function send() {
+async function setHomeDomain() {
   try {
-    console.log("1. 유통 지갑 정보를 불러오는 중...");
-    const account = await server.loadAccount(distributor.publicKey());
+    console.log("1. 발행자 계정 정보를 불러오는 중...");
+    const account = await server.loadAccount(issuerKeypair.publicKey());
 
-    // 서버에서 최소 수수료 자동 조회
-    const feeStats = await server.feeStats();
-    const minFee = feeStats.fee_charged.p90;
-
-    console.log(`2. 서버 최소 수수료(${minFee})로 전송 시도 중...`);
-
+    console.log("2. 홈 도메인(xpaio.com) 설정 트랜잭션 빌드 중...");
     const tx = new TransactionBuilder(account, {
-      fee: minFee,
-      networkPassphrase: Networks.TESTNET
+      fee: "1000", // 수수료 넉넉히 설정
+      networkPassphrase: "Pi Testnet" // 파이 네트워크용 패스프레이즈
     })
+      // 핵심 오퍼레이션: 내 도메인을 블록체인에 등록합니다.
       .addOperation(
-        Operation.payment({
-          destination: RECEIVER,
-          asset: XPAIO,
-          amount: "10"
+        Operation.setOptions({
+          homeDomain: "xpaio.com" // 리더님의 도메인
         })
       )
       .setTimeout(60)
       .build();
 
-    tx.sign(distributor);
+    tx.sign(issuerKeypair);
 
     const result = await server.submitTransaction(tx);
-    console.log("🎉 전송 성공:", result);
+    console.log("✅ 10단계 준비 완료! 홈 도메인 설정 성공:", result);
 
   } catch (err) {
-    console.error("❌ 전송 실패:", err.response?.data || err);
+    console.error("❌ 설정 실패:", err.response?.data?.extras?.result_codes || err);
   }
 }
 
-send();
+setHomeDomain();
